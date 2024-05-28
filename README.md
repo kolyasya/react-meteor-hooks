@@ -34,7 +34,7 @@ const MyComponent = () => {
         const param = params[0];
 
         if (param.methodParam !== 'Test string') {
-          return throw new Error('Method params must be equal to "Test string"!')
+          throw new Error('Method params must be equal to "Test string"!')
         }
 
         return params;
