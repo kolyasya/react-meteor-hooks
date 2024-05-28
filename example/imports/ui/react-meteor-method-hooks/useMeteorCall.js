@@ -13,7 +13,7 @@ const useMeteorCall = (
   name,
   {
     cb,
-    validate = (params) => params,
+    validate = (...params) => params,
     forceSyncCall = false,
     logging = false,
     suppressErrorLogging = false,
