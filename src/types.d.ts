@@ -1,8 +1,13 @@
+type Params = any[] | Record<string, any>;
+
 export type UseMeteorCallHook = (
   name: string,
-  params?: any[] | object,
+  params?: Params,
   cb?: (error: object | undefined, result: any) => void,
   hookParams?: {
+    /** Validate and mutate params before handler execution */
+    validate?: (params: Params) => Params;
+
     /** Forces to use Meteor.call() instead of Meteor.callAsync() */
     forceSyncCall?: boolean;
     /** Adds some logging in console */
