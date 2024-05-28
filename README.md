@@ -19,15 +19,27 @@ const MyComponent = () => {
     calculateSomethingResult
   ] = useMeteorCall(
     'calculateSomethingMethodName',
-    { methodParam: 'Test string' },
-    (error, result) => {
-      if (error) {
-        alert(error.reason);
-      } else {
-        console.log(result);
-      }
-    },
     {
+      /** Callback to be executed after the method is called */
+      cb: (error, result) => {
+        if (error) {
+          alert(error.reason);
+        } else {
+          console.log(result);
+        }
+      },
+
+      /** Validate and mutate params before handler execution */
+      (...params) => {
+        const param = params[0];
+
+        if (param.methodParam !== 'Test string') {
+          return throw new Error('Method params must be equal to "Test string"!')
+        }
+
+        return params;
+      },
+
       /** Forces to use Meteor.call() instead of Meteor.callAsync() */
       forceSyncCall: true,
       /** Adds some logging in console */
@@ -37,7 +49,8 @@ const MyComponent = () => {
        * The setting disables such logs
        */
       suppressErrorLogging: true
-    }
+    },
+    { methodParam: 'Test string' },
   );
 
   return (

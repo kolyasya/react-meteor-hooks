@@ -1,12 +1,11 @@
-type Params = any[] | Record<string, any>;
-
 export type UseMeteorCallHook = (
   name: string,
-  params?: Params,
-  cb?: (error: object | undefined, result: any) => void,
-  hookParams?: {
+  config?: {
+    /** Callback to be executed after the method is called */
+    cb?: (error: object | undefined, result: any) => void;
+
     /** Validate and mutate params before handler execution */
-    validate?: (params: Params) => Params;
+    validate?: (...params: any[]) => any[];
 
     /** Forces to use Meteor.call() instead of Meteor.callAsync() */
     forceSyncCall?: boolean;
@@ -17,7 +16,8 @@ export type UseMeteorCallHook = (
      * The setting disables such logs
      */
     suppressErrorLogging?: boolean;
-  }
+  },
+  ...params: any[]
 ) => [
   methodHandler: (...params: any[]) => Promise<any>,
   loading: boolean,
@@ -25,8 +25,8 @@ export type UseMeteorCallHook = (
   result: any
 ];
 
-export type UseMeteorCallHookInitialState = {
+export type UseMeteorCallHookState = {
   loading: boolean;
-  error: object | undefined;
+  error?: object;
   result: any;
 };

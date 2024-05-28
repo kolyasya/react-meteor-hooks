@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { useState, useCallback } from 'react';
 
-/** @type {import('./types').UseMeteorCallHookInitialState} */
+/** @type {import('./types').UseMeteorCallHookState} */
 const initialState = {
   loading: false,
   error: undefined,
@@ -11,14 +11,14 @@ const initialState = {
 /** @type {import('./types').UseMeteorCallHook} */
 const useMeteorCall = (
   name,
-  params = {},
-  cb,
   {
+    cb,
     validate = (params) => params,
     forceSyncCall = false,
     logging = false,
     suppressErrorLogging = false,
-  } = {}
+  } = {},
+  ...params
 ) => {
   if (!Meteor) {
     return console.error(
@@ -35,7 +35,7 @@ const useMeteorCall = (
   const [result, setResult] = useState(initialState.result);
 
   const methodHandler = useCallback(
-    async (..._params) => {
+    async (...customParams) => {
       setLoading(true);
       setError(initialState.error);
       setResult(initialState.result);
@@ -43,14 +43,16 @@ const useMeteorCall = (
       let paramsToUse;
       try {
         // User can override method parameters at execution time
-        if (_params.length && logging) {
+        if (customParams.length && logging) {
           console.log(
             `Custom params provided for the call, using them instead of hook params`,
-            { customParams: _params }
+            { customParams }
           );
         }
 
-        paramsToUse = validate(_params.length ? _params : params);
+        paramsToUse = validate(
+          ...(customParams.length ? customParams : params)
+        );
       } catch (error) {
         if (logging) {
           console.log(`Error while validating params:`, error);
@@ -72,7 +74,7 @@ const useMeteorCall = (
             console.log(JSON.stringify(paramsToUse, undefined, 2));
           }
 
-          const result = await Meteor.callAsync(name, paramsToUse);
+          const result = await Meteor.callAsync(name, ...paramsToUse);
           setLoading(false);
           setResult(result);
 
@@ -106,7 +108,7 @@ const useMeteorCall = (
           );
           console.log(JSON.stringify(paramsToUse, undefined, 2));
         }
-        Meteor.call(name, paramsToUse, (error, result) => {
+        Meteor.call(name, ...paramsToUse, (error, result) => {
           setLoading(false);
           setError(error);
           setResult(result);
@@ -132,7 +134,7 @@ const useMeteorCall = (
         });
       }
     },
-    [name, params, cb]
+    [name, params, cb, validate, forceSyncCall, logging, suppressErrorLogging]
   );
 
   return [methodHandler, loading, error, result];
