@@ -36,7 +36,7 @@ Meteor.startup(async () => {
   });
 
   Meteor.methods({
-    methodWithResult: async function (params) {
+    methodWithResult: async function (...params) {
       this.unblock();
       Meteor._sleepForMs(1500);
 

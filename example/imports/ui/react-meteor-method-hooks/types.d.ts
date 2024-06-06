@@ -1,8 +1,14 @@
 export type UseMeteorCallHook = (
   name: string,
-  params?: any[] | object,
-  cb?: (error: object | undefined, result: any) => void,
-  hookParams?: {
+  config?: {
+    /** Callback to be executed after the method is called */
+    cb?: (error: object | undefined, result: any) => void;
+
+    /** Validate params before handler execution */
+    validate?: (...params: any[]) => boolean;
+    /** Transform params after validation before handler execution */
+    transform?: (...params: any[]) => any[];
+
     /** Forces to use Meteor.call() instead of Meteor.callAsync() */
     forceSyncCall?: boolean;
     /** Adds some logging in console */
@@ -12,7 +18,8 @@ export type UseMeteorCallHook = (
      * The setting disables such logs
      */
     suppressErrorLogging?: boolean;
-  }
+  },
+  ...params: any[]
 ) => [
   methodHandler: (...params: any[]) => Promise<any>,
   loading: boolean,
@@ -20,8 +27,8 @@ export type UseMeteorCallHook = (
   result: any
 ];
 
-export type UseMeteorCallHookInitialState = {
+export type UseMeteorCallHookState = {
   loading: boolean;
-  error: object | undefined;
+  error?: object;
   result: any;
 };

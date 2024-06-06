@@ -10,15 +10,20 @@ export const App = () => {
     methodWithResultResult,
   ] = useMeteorCall(
     'methodWithResult',
-    ['one', 'two', 'three'],
-    (error, result) => {
-      console.log('methodWithResult callback', { error, result });
-    },
     {
+      cb: (error, result) => {
+        console.log('methodWithResult callback', { error, result });
+      },
+      validate: (...params) =>
+        params.every((param) => typeof param === 'string'),
+      transform: (...params) => params.map((p, i) => `${i + 1}-${p}`),
       forceSyncCall: false,
       logging: false,
       suppressErrorLogging: false,
-    }
+    },
+    'one',
+    'two',
+    'three'
   );
 
   const [
@@ -26,18 +31,14 @@ export const App = () => {
     methodWithErrorLoading,
     methodWithErrorError,
     methodWithErrorResult,
-  ] = useMeteorCall(
-    'methodWithError',
-    {},
-    (error, result) => {
+  ] = useMeteorCall('methodWithError', {
+    cb: (error, result) => {
       console.log('methodWithError callback', { error, result });
     },
-    {
-      forceSyncCall: true,
-      logging: true,
-      suppressErrorLogging: true,
-    }
-  );
+    forceSyncCall: false,
+    logging: false,
+    suppressErrorLogging: false,
+  });
 
   useEffect(() => {
     methodWithResult();
@@ -50,7 +51,7 @@ export const App = () => {
       // methodWithResult();
       // methodWithResult({});
       methodWithResult({ customParam: true });
-    }, 5000);
+    }, 15000);
 
     return () => clearTimeout(timeout);
   }, []);
