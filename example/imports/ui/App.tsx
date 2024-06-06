@@ -14,13 +14,9 @@ export const App = () => {
       cb: (error, result) => {
         console.log('methodWithResult callback', { error, result });
       },
-      validate: (...params) => {
-        if (!params.every((param) => typeof param === 'string')) {
-          throw new Error('All parameters must be strings!');
-        }
-
-        return params;
-      },
+      validate: (...params) =>
+        params.every((param) => typeof param === 'string'),
+      transform: (...params) => params.map((p, i) => `${i + 1}-${p}`),
       forceSyncCall: false,
       logging: false,
       suppressErrorLogging: false,

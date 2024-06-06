@@ -33,11 +33,7 @@ const MyComponent = () => {
       (...params) => {
         const param = params[0];
 
-        if (param.methodParam !== 'Test string') {
-          throw new Error('Method params must be equal to "Test string"!')
-        }
-
-        return params;
+        return param.methodParam === 'Test string';
       },
 
       /** Forces to use Meteor.call() instead of Meteor.callAsync() */
