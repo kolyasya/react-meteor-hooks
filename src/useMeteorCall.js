@@ -13,7 +13,8 @@ const useMeteorCall = (
   name,
   {
     cb,
-    validate = (...params) => params,
+    validate = (...params) => true,
+    transform = (...params) => params,
     forceSyncCall = false,
     logging = false,
     suppressErrorLogging = false,
@@ -40,28 +41,30 @@ const useMeteorCall = (
       setError(initialState.error);
       setResult(initialState.result);
 
-      let paramsToUse;
-      try {
-        // User can override method parameters at execution time
-        if (customParams.length && logging) {
-          console.log(
-            `Custom params provided for the call, using them instead of hook params`,
-            { customParams }
-          );
-        }
+      let paramsToUse = customParams.length ? customParams : params;
 
-        paramsToUse = validate(
-          ...(customParams.length ? customParams : params)
+      // User can override method parameters at execution time
+      if (customParams.length && logging) {
+        console.log(
+          `Custom params provided for the call, using them instead of hook params`,
+          { customParams }
         );
-      } catch (error) {
+      }
+
+      if (!validate(...paramsToUse)) {
         if (logging) {
-          console.log(`Error while validating params:`, error);
+          console.log(`Invalid params:`, paramsToUse);
         }
 
         setLoading(false);
-        setError(error);
+        setError('Params validation failed on method call');
 
         return;
+      }
+
+      paramsToUse = transform(...paramsToUse);
+      if (logging) {
+        console.log(`Transformed params:`, { paramsToUse });
       }
 
       // Meteor 3.0
@@ -134,7 +137,16 @@ const useMeteorCall = (
         });
       }
     },
-    [name, params, cb, validate, forceSyncCall, logging, suppressErrorLogging]
+    [
+      name,
+      params,
+      cb,
+      validate,
+      transform,
+      forceSyncCall,
+      logging,
+      suppressErrorLogging,
+    ]
   );
 
   return [methodHandler, loading, error, result];

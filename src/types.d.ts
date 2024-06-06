@@ -4,8 +4,10 @@ export type UseMeteorCallHook = (
     /** Callback to be executed after the method is called */
     cb?: (error: object | undefined, result: any) => void;
 
-    /** Validate and mutate params before handler execution */
-    validate?: (...params: any[]) => any[];
+    /** Validate params before handler execution */
+    validate?: (...params: any[]) => boolean;
+    /** Transform params after validation before handler execution */
+    transform?: (...params: any[]) => any[];
 
     /** Forces to use Meteor.call() instead of Meteor.callAsync() */
     forceSyncCall?: boolean;
