@@ -57,7 +57,7 @@ const useMeteorCall = (
         }
 
         setLoading(false);
-        setError('Invalid parameters!');
+        setError('Params validation failed on method call');
 
         return;
       }
