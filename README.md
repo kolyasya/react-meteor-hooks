@@ -29,11 +29,17 @@ const MyComponent = () => {
         }
       },
 
-      /** Validate and mutate params before handler execution */
-      (...params) => {
+      /** Validate params before handler execution */
+      validate: (...params) => {
         const param = params[0];
 
         return param.methodParam === 'Test string';
+      },
+      /** Transform params after validation before handler execution */
+      transform: (...params) => {
+        const param = params[0];
+
+        return [{ ...param, methodParam: 'Transformed string' }];
       },
 
       /** Forces to use Meteor.call() instead of Meteor.callAsync() */
