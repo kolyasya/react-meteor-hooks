@@ -8,7 +8,13 @@ const initialState = {
   result: undefined,
 };
 
-/** @type {import('./types').UseMeteorCallHook} */
+/**
+ * @param {string} MethodName
+ * @param {import('./types').UseMeteorCallHookConfig} UseMeteorCallHookConfig
+ * @param {...any[]} MethodParams
+ * 
+ * @returns {import('./types').UseMeteorCallHookResult}
+ **/
 const useMeteorCall = (
   name,
   {
