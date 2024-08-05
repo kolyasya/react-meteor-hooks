@@ -16,17 +16,23 @@ export type UseMeteorCallHookConfig = {
    * The setting disables such logs
    */
   suppressErrorLogging?: boolean;
-}
+};
 
 export type UseMeteorCallHookResult = [
   methodHandler: (...params: any[]) => Promise<any>,
   loading: boolean,
   error: object | undefined,
   result: any
-]
+];
 
 export type UseMeteorCallHookState = {
   loading: boolean;
   error?: object;
   result: any;
 };
+
+export function useMeteorCall(
+  methodName: string,
+  meteorCallHookConfig?: UseMeteorCallHookConfig,
+  ...methodParams: any[]
+): UseMeteorCallHookResult;

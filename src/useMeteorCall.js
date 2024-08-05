@@ -15,7 +15,7 @@ const initialState = {
  * 
  * @returns {import('./types').UseMeteorCallHookResult}
  **/
-const useMeteorCall = (
+export const useMeteorCall = (
   name,
   {
     cb,
@@ -157,5 +157,3 @@ const useMeteorCall = (
 
   return [methodHandler, loading, error, result];
 };
-
-export { useMeteorCall };
